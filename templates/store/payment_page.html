@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Razorpay Checkout Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white shadow-lg rounded-lg p-6">
+        <h1 class="text-2xl font-bold mb-4 text-center text-gray-800">
+            Payment for Order #{{ order.id }}
+        </h1>
+
+        <div class="space-y-3">
+            <p class="text-gray-700 text-lg">
+                <span class="font-semibold">Total Amount:</span> ₹{{ order.total_amount }}
+            </p>
+            <p class="text-gray-700 text-lg">
+                <span class="font-semibold">Delivery Partner:</span> {{ order.delivery_partner }}
+            </p>
+        </div>
+
+        <div class="mt-6 text-center">
+           <button 
+    id="razorpay-button"
+    class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg shadow-md transition-all duration-300">
+    Proceed to Payment
+</button>
+
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('rzp-button').onclick = function(e) {
+            e.preventDefault();
+
+            var options = {
+                "key": "{{ razorpay_key }}", // Razorpay Key ID from backend
+                "amount": "{{ amount }}",    // Backend se already paisa me pass kiya gaya
+                "currency": "INR",
+                "name": "Tech Computers",
+                "description": "Payment for Order #{{ order.id }}",
+                "image": "/static/images/logo.png",
+                "order_id": "{{ razorpay_order_id }}", // Razorpay order ID
+                "handler": function (response){
+                    // Payment success callback
+                                  alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+                window.location.href = "/payment-success/{{ order.id }}/";
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+    }
+</script>
+
+</body>
+</html>

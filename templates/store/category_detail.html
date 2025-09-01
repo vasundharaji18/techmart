@@ -1,0 +1,26 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block title %}{{ category.name }} - TechMart{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold text-center mb-10">{{ category.name }}</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for product in products %}
+        <div class="bg-white shadow-lg p-6 rounded-xl text-center hover:shadow-2xl transition-shadow duration-300">
+            <a href="{% url 'product_detail' product.id %}">
+                <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full h-48 object-cover rounded-lg mb-4">
+            </a>
+            <h3 class="font-semibold text-xl text-gray-900">{{ product.title }}</h3>
+            <p class="text-2xl font-bold text-[var(--primary-color)] mt-2">₹{{ product.price }}</p>
+            <a href="{% url 'product_detail' product.id %}" class="inline-block mt-4 px-6 py-2 bg-[var(--primary-color)] text-white rounded-full font-semibold hover:bg-[var(--secondary-color)] transition-colors duration-300">
+                View Product
+            </a>
+        </div>
+        {% empty %}
+        <p class="col-span-full text-center text-gray-500">No products found in this category.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
