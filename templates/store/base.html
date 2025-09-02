@@ -1,10 +1,24 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ site_logo.alt_text|default:"TechMart" }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ site_logo.alt_text|default:"Techcomputers" }}</title>
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-yHma4GfZ4I+fYqH5+J0uD7kDd3Ip8R6HzUyxj57tR3JXYeNnrx+l3k1lymj1fNN6V2i3DBO1i8eJrjB45nX1hA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Font Awesome (CDN) -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+          integrity="sha512-S2D8Q9Aw3a5+0+exampleKeyForFontAwesome"
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer" />
+
+    <!-- Correct Favicon Path -->
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+
     <style>
         :root {
             --primary-color: {{ site_theme.primary_color|default:"#1D4ED8" }};
@@ -15,7 +29,7 @@
 </head>
 <body class="bg-gray-50 text-[var(--text-color)]">
 
-    <nav class="bg-white shadow-md relative z-50">
+<nav class="bg-white shadow-md relative z-50">
     <div class="container mx-auto flex justify-between items-center p-4">
         <div class="flex items-center gap-2">
             {% if site_logo %}
@@ -27,19 +41,24 @@
             {% endif %}
         </div>
 
-        <button id="menu-btn" class="md:hidden p-2 focus:outline-none z-50 transition-transform duration-300 bg-black rounded-md hover:bg-gray-800" style="display: flex; flex-direction: column; justify-content: space-around; width: 30px; height: 25px; cursor: pointer; transition: all 0.3s ease-in-out;">
-            <span class="line" style="display: block; width: 100%; height: 3px; background-color: white; border-radius: 2px; transition: all 0.3s ease-in-out;"></span>
-            <span class="line" style="display: block; width: 100%; height: 3px; background-color: white; border-radius: 2px; transition: all 0.3s ease-in-out;"></span>
-            <span class="line" style="display: block; width: 100%; height: 3px; background-color: white; border-radius: 2px; transition: all 0.3s ease-in-out;"></span>
+        <!-- Mobile Menu Button -->
+        <button id="menu-btn" class="md:hidden p-2 focus:outline-none z-50 bg-black rounded-md hover:bg-gray-800 flex flex-col justify-around w-8 h-6 transition-all">
+            <span class="line w-full h-0.5 bg-white rounded transition-all"></span>
+            <span class="line w-full h-0.5 bg-white rounded transition-all"></span>
+            <span class="line w-full h-0.5 bg-white rounded transition-all"></span>
         </button>
 
+        <!-- Desktop Menu -->
         <ul class="hidden md:flex gap-6 items-center">
-            <li><a href="{% url 'home' %}" class="hover:text-[var(--primary-color)] transition font-medium">Home</a></li>
+            
             {% for link in nav_links %}
                 <li><a href="{{ link.url }}" class="hover:text-[var(--primary-color)] transition font-medium">{{ link.title }}</a></li>
             {% endfor %}
+            
+            <li><a href="{% url 'home' %}" class="hover:text-[var(--primary-color)] transition font-medium">Home</a></li>
             <li><a href="{% url 'about' %}" class="hover:text-[var(--primary-color)] transition font-medium">About</a></li>
             <li><a href="{% url 'contact' %}" class="hover:text-[var(--primary-color)] transition font-medium">Contact</a></li>
+            <li><a href="{% url 'shop' %}" class="hover:text-[var(--primary-color)] transition font-medium">Shop</a></li>
 
             {% if user.is_authenticated %}
                 <li>
@@ -65,6 +84,7 @@
         </ul>
     </div>
 
+    <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white shadow-md md:hidden z-40">
         <ul class="flex flex-col p-2 gap-2 text-black">
             <li><a href="{% url 'home' %}" class="block text-black hover:text-[var(--primary-color)] transition font-medium">Home</a></li>
@@ -75,13 +95,12 @@
             {% endfor %}
             <li><a href="{% url 'about' %}" class="block text-black hover:text-[var(--primary-color)] transition font-medium">About</a></li>
             <li><a href="{% url 'contact' %}" class="block text-black hover:text-[var(--primary-color)] transition font-medium">Contact</a></li>
-
             {% if user.is_authenticated %}
                 <li><a href="{% url 'profile' %}" class="block text-black hover:text-[var(--primary-color)] transition font-medium">Profile</a></li>
                 <li>
                     <form method="POST" action="{% url 'logout' %}">
                         {% csrf_token %}
-                        <button type="submit" class="w-full text-left block text-black hover:text-[var(--primary-color)] transition font-medium">Logout</button>
+                        <button type="submit" class="w-full text-left text-black hover:text-[var(--primary-color)] transition font-medium">Logout</button>
                     </form>
                 </li>
             {% else %}
@@ -99,8 +118,7 @@
         btn.addEventListener('click', () => {
             menu.classList.toggle('hidden');
             btn.classList.toggle('open');
-            
-            // Apply inline styles for the cross animation
+
             const lines = btn.querySelectorAll('.line');
             if (btn.classList.contains('open')) {
                 lines[0].style.transform = 'rotate(45deg) translate(7px, 7px)';
@@ -115,32 +133,32 @@
     </script>
 </nav>
 
-    <main class="container mx-auto mt-6">
-        {% block content %}{% endblock %}
-    </main>
+<main class="container mx-auto mt-6">
+    {% block content %}{% endblock %}
+</main>
 
-    <footer class="bg-gray-100 p-6 mt-12 text-center">
-        <div class="flex justify-center gap-4 mb-4 flex-wrap">
-            {% for link in footer_links %}
-                <a href="{{ link.url }}" class="hover:text-[var(--primary-color)] transition font-medium">{{ link.name }}</a>
-            {% endfor %}
-            <a href="{% url 'about' %}" class="hover:text-[var(--primary-color)] transition font-medium">About</a>
-            <a href="{% url 'contact' %}" class="hover:text-[var(--primary-color)] transition font-medium">Contact</a>
-        </div>
+<footer class="bg-gray-100 p-6 mt-12 text-center">
+    <div class="flex justify-center gap-4 mb-4 flex-wrap">
+        {% for link in footer_links %}
+            <a href="{{ link.url }}" class="hover:text-[var(--primary-color)] transition font-medium">{{ link.name }}</a>
+        {% endfor %}
+        <a href="{% url 'about' %}" class="hover:text-[var(--primary-color)] transition font-medium">About</a>
+        <a href="{% url 'contact' %}" class="hover:text-[var(--primary-color)] transition font-medium">Contact</a>
+    </div>
 
-        <div class="flex justify-center gap-4 mb-4 text-gray-600 text-xl">
-            {% for social in social_links %}
-                <a href="{{ social.url }}" target="_blank" class="hover:text-[var(--primary-color)] transition">
-                    {% if social.name|lower == "facebook" %}<i class="fab fa-facebook-f"></i>
-                    {% elif social.name|lower == "twitter" %}<i class="fab fa-twitter"></i>
-                    {% elif social.name|lower == "instagram" %}<i class="fab fa-instagram"></i>
-                    {% elif social.name|lower == "linkedin" %}<i class="fab fa-linkedin-in"></i>
-                    {% else %}{{ social.name }}{% endif %}
-                </a>
-            {% endfor %}
-        </div>
+    <div class="flex justify-center gap-4 mb-4 text-gray-600 text-xl">
+        {% for social in social_links %}
+            <a href="{{ social.url }}" target="_blank" class="hover:text-[var(--primary-color)] transition">
+                {% if social.name|lower == "facebook" %}<i class="fab fa-facebook-f"></i>
+                {% elif social.name|lower == "twitter" %}<i class="fab fa-twitter"></i>
+                {% elif social.name|lower == "instagram" %}<i class="fab fa-instagram"></i>
+                {% elif social.name|lower == "linkedin" %}<i class="fab fa-linkedin-in"></i>
+                {% else %}{{ social.name }}{% endif %}
+            </a>
+        {% endfor %}
+    </div>
 
-        <p class="text-gray-600">&copy; {{ site_logo.alt_text|default:"Techcomputers" }} {{ now|date:"Y" }}</p>
-    </footer>
+    <p class="text-gray-600">&copy; {{ site_logo.alt_text|default:"Techcomputers" }} {{ now|date:"Y" }}</p>
+</footer>
 </body>
 </html>

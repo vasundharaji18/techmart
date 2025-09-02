@@ -1,17 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils.text import slugify
 # ----------------- CATEGORY -----------------
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, blank=True)
+    image = models.ImageField(upload_to='category_images/', blank=True, null=True)
 
-    class Meta:
-        verbose_name_plural = "Categories"
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
-
 
 # ----------------- PRODUCT -----------------
 class Product(models.Model):
@@ -20,13 +22,20 @@ class Product(models.Model):
     description = models.TextField()
     price = models.FloatField()
     stock = models.PositiveIntegerField(default=0)
-    image = models.ImageField(upload_to='products/', blank=True, null=True)
-
+    image = models.ImageField(upload_to='products/', blank=True, null=True)  # Main image
     featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return self.title
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='products/multiple/')
+
+    def __str__(self):
+        return f"{self.product.title} - Image {self.id}"
 
 
 # ----------------- CART -----------------
@@ -46,7 +55,7 @@ class CartItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
 
     def __str__(self):
-        return f"{self.product.name} (x{self.quantity})"
+        return f"{self.product.title} (x{self.quantity})"
 
 # ----------------- HERO SECTION -----------------
 class HeroSection(models.Model):

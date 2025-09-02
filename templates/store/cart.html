@@ -1,4 +1,5 @@
 {% extends "store/base.html" %}
+{% load static %}
 
 {% block content %}
 <div class="max-w-5xl mx-auto mt-8">
@@ -28,7 +29,15 @@
                     {% for item in cart_items %}
                     <tr class="border-b hover:bg-gray-50">
                         <td class="p-3 flex items-center gap-2">
-                            <img src="{{ item.product.image.url }}" alt="{{ item.product.title }}" class="w-16 h-16 object-cover rounded">
+                            {% for image in item.product.images.all %}
+                                <img src="{{ image.image.url }}" alt="{{ item.product.title }}" style="width:150px; height:auto;">
+                            {% empty %}
+                                {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.title }}" style="width:150px; height:auto;">
+                                {% else %}
+                                    <img src="{% static 'placeholder.png' %}" alt="No Image" style="width:150px; height:auto;">
+                                {% endif %}
+                            {% endfor %}
                             <span>{{ item.product.title }}</span>
                         </td>
 
@@ -56,6 +65,7 @@
                 </tbody>
             </table>
         </div>
+
         <div class="text-right mt-4">
             <a href="{% url 'checkout' %}" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition">
                 Proceed to Checkout

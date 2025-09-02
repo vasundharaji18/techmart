@@ -8,7 +8,7 @@
 <!-- BANNERS -->
 <section class="relative">
     {% for banner in banners %}
-    <div class="relative h-96 mb-4 overflow-hidden rounded-lg">
+    <div class="relative mb-4 overflow-hidden rounded-lg">
 
         <!-- Video or Image Background -->
         {% if banner.video %}
@@ -43,9 +43,9 @@
         {% for category in categories %}
         <a href="{% url 'category_detail' category.slug %}" class="block bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 group transform hover:scale-105">
             {% if category.image %}
-            <img src="{{ category.image.url }}" alt="{{ category.name }}" class="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-300">
+            <img src="{{ category.image.url }}" alt="{{ category.name }}" class="w-full object-contain max-h-64 group-hover:scale-110 transition-transform duration-300">
             {% else %}
-            <img src="{% static 'images/default.jpg' %}" alt="No Image" class="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-300">
+            <img src="{% static 'images/default.jpg' %}" alt="No Image" class="w-full object-contain max-h-64 group-hover:scale-110 transition-transform duration-300">
             {% endif %}
             <div class="p-4 text-center">
                 <h3 class="font-semibold text-lg text-gray-800">{{ category.name }}</h3>
@@ -62,9 +62,9 @@
         {% for offer in offers %}
         <div class="bg-white shadow p-4 rounded w-64 hover:shadow-lg transition">
             {% if offer.image %}
-            <img src="{{ offer.image.url }}" class="h-40 w-full object-cover rounded mb-2" alt="{{ offer.title }}">
+            <img src="{{ offer.image.url }}" class="w-full object-contain rounded mb-2" alt="{{ offer.title }}">
             {% else %}
-            <img src="{% static 'images/placeholder.png' %}" class="h-40 w-full object-cover rounded mb-2" alt="No Image">
+            <img src="{% static 'images/placeholder.png' %}" class="w-full object-contain rounded mb-2" alt="No Image">
             {% endif %}
             <h3 class="font-semibold text-lg">{{ offer.title }}</h3>
             <p class="text-gray-600">{{ offer.description|truncatewords:15 }}</p>
@@ -86,33 +86,13 @@
         {% for fp in featured_products %}
         <div class="bg-white shadow p-4 rounded w-64 hover:shadow-lg transition">
             {% if fp.product.image %}
-            <img src="{{ fp.product.image.url }}" class="h-40 w-full object-cover rounded mb-2" alt="{{ fp.product.title }}">
+            <img src="{{ fp.product.image.url }}" class="w-full object-contain rounded mb-2" alt="{{ fp.product.title }}">
             {% else %}
-            <img src="{% static 'images/default.jpg' %}" class="h-40 w-full object-cover rounded mb-2" alt="No Image">
+            <img src="{% static 'images/default.jpg' %}" class="w-full object-contain rounded mb-2" alt="No Image">
             {% endif %}
             <h3 class="font-semibold text-lg">{{ fp.product.title }}</h3>
             <p class="text-gray-600">₹{{ fp.product.price }}</p>
             <a href="{% url 'product_detail' fp.product.id %}" class="inline-block mt-2 text-blue-500 hover:underline">View</a>
-        </div>
-        {% endfor %}
-    </div>
-</section>
-
-<!-- BEST SELLERS -->
-<section class="py-12 bg-gray-50">
-    <h2 class="text-3xl font-bold text-center mb-6">Best Sellers</h2>
-    <div class="flex flex-wrap justify-center gap-6">
-        {% for bs in best_sellers %}
-        <div class="bg-white shadow p-4 rounded w-64 hover:shadow-lg transition">
-            {% if bs.product.image %}
-            <img src="{{ bs.product.image.url }}" class="h-40 w-full object-cover rounded mb-2" alt="{{ bs.product.title }}">
-            {% else %}
-            <img src="{% static 'images/default.jpg' %}" alt="No Image" class="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-300">
-
-            {% endif %}
-            <h3 class="font-semibold text-lg">{{ bs.product.title }}</h3>
-            <p class="text-gray-600">₹{{ bs.product.price }}</p>
-            <a href="{% url 'product_detail' bs.product.id %}" class="inline-block mt-2 text-blue-500 hover:underline">View</a>
         </div>
         {% endfor %}
     </div>
@@ -125,9 +105,9 @@
         {% for na in new_arrivals %}
         <div class="bg-gray-50 shadow p-4 rounded w-64 hover:shadow-lg transition">
             {% if na.product.image %}
-            <img src="{{ na.product.image.url }}" class="h-40 w-full object-cover rounded mb-2" alt="{{ na.product.title }}">
+            <img src="{{ na.product.image.url }}" class="w-full object-contain rounded mb-2" alt="{{ na.product.title }}">
             {% else %}
-            <img src="{% static 'images/default.jpg' %}" class="h-40 w-full object-cover rounded mb-2" alt="No Image">
+            <img src="{% static 'images/default.jpg' %}" class="w-full object-contain rounded mb-2" alt="No Image">
             {% endif %}
             <h3 class="font-semibold text-lg">{{ na.product.title }}</h3>
             <p class="text-gray-600">₹{{ na.product.price }}</p>

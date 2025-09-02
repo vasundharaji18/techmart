@@ -1,24 +1,30 @@
 from django.contrib import admin
 from .models import (
-    Category, Product, HeroSection, AboutSection, FooterLink, NewsletterSubscriber,
+    Category, Product, ProductImage, HeroSection, AboutSection, FooterLink, NewsletterSubscriber,
     SiteTheme, SiteLogo, NavLink, SocialLink, SiteSettings,
     Banner, Offer, Order, OrderItem,
     FeaturedProduct, BestSeller, NewArrival,
     ProductReview, AboutPage, ContactMessage
 )
 
-# ----------------- CATEGORY & PRODUCT -----------------
+# ----------------- CATEGORY -----------------
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "slug")
     search_fields = ("name",)
 
 
+# ----------------- PRODUCT WITH MULTIPLE IMAGES -----------------
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 1
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ("title", "price", "category", "stock", "featured", "created_at")
     list_filter = ("featured", "category", "created_at")
     search_fields = ("title", "description")
+    inlines = [ProductImageInline]
 
 
 # ----------------- HERO & ABOUT -----------------
@@ -82,8 +88,9 @@ class OfferAdmin(admin.ModelAdmin):
 # ----------------- NEWSLETTER -----------------
 @admin.register(NewsletterSubscriber)
 class NewsletterSubscriberAdmin(admin.ModelAdmin):
-    list_display = ('email', 'subscribed_at')  # show email and date
+    list_display = ('email', 'subscribed_at')
     ordering = ('-subscribed_at',)
+
 
 # ----------------- ORDERS -----------------
 @admin.register(Order)

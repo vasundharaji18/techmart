@@ -99,7 +99,7 @@ STATICFILES_DIRS = [BASE_DIR / "static"]           # development static folder
 STATIC_ROOT = BASE_DIR / "staticfiles"            # for collectstatic (must exist)
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Make sure STATIC_ROOT folder exists
 os.makedirs(STATIC_ROOT, exist_ok=True)
