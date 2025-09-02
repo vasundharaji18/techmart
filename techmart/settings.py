@@ -1,5 +1,5 @@
 """
-Django settings for techmart project.
+Django settings for techcomputer project.
 """
 
 from pathlib import Path

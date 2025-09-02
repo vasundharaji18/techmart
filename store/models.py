@@ -20,7 +20,8 @@ class Product(models.Model):
     description = models.TextField()
     price = models.FloatField()
     stock = models.PositiveIntegerField(default=0)
-    image = models.ImageField(upload_to='products/')
+    image = models.ImageField(upload_to='products/', blank=True, null=True)
+
     featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     

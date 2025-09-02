@@ -5,28 +5,30 @@
 
     <h1 class="text-4xl font-bold mb-8 text-center text-[var(--primary-color)]">Shop</h1>
 
-    <!-- Search Bar -->
-    <form action="{% url 'shop_search' %}" method="get" class="mb-8 flex flex-col sm:flex-row justify-center gap-4">
-        <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search products..." 
-               class="flex-1 px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]">
+    <form action="{% url 'shop_search' %}" method="get" class="mb-8 flex flex-col sm:flex-row justify-center gap-4 relative">
+        <div class="flex-1 flex border rounded-md focus-within:ring-2 focus-within:ring-[var(--primary-color)] overflow-hidden">
+            <input type="text" id="voice-search-input" name="q" value="{{ query|default:'' }}" placeholder="Search products..." 
+                class="flex-1 px-4 py-3 focus:outline-none">
+            <button type="button" id="voice-search-btn" class="px-4 py-3 bg-gray-200 hover:bg-gray-300 transition text-gray-600">
+                <i class="fas fa-microphone"></i>
+            </button>
+        </div>
         <button type="submit" class="px-6 py-3 bg-[var(--primary-color)] text-white rounded-md hover:bg-[var(--secondary-color)] transition font-medium">
             Search
         </button>
     </form>
 
-    <!-- Categories Filter -->
     <div class="mb-8 flex flex-wrap justify-center gap-3">
-        <a href="{% url 'shop' %}" class="px-4 py-2 rounded-md {% if not selected_category %}bg-[var(--primary-color)] text-white{% else %}bg-gray-200{% endif %} hover:bg-[var(--primary-color)] hover:text-white transition">
+        <a href="{% url 'shop' %}" class="px-4 py-2 rounded-md {% if not selected_category and not query %}bg-[var(--primary-color)] text-white{% else %}bg-gray-200{% endif %} hover:bg-[var(--primary-color)] hover:text-white transition">
             All
         </a>
         {% for category in categories %}
-        <a href="?category={{ category.id }}" class="px-4 py-2 rounded-md {% if selected_category == category.id %}bg-[var(--primary-color)] text-white{% else %}bg-gray-200{% endif %} hover:bg-[var(--primary-color)] hover:text-white transition">
+        <a href="?category={{ category.id }}{% if query %}&q={{ query }}{% endif %}" class="px-4 py-2 rounded-md {% if selected_category == category.id %}bg-[var(--primary-color)] text-white{% else %}bg-gray-200{% endif %} hover:bg-[var(--primary-color)] hover:text-white transition">
             {{ category.name }}
         </a>
         {% endfor %}
     </div>
 
-    <!-- Products Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {% for product in products %}
         <div class="bg-white shadow rounded-lg p-4 hover:shadow-2xl transition flex flex-col">
@@ -52,26 +54,70 @@
         {% endfor %}
     </div>
 
-    <!-- Pagination -->
     {% if page_obj %}
     <div class="mt-8 flex justify-center gap-2 flex-wrap">
         {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}" class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 transition">Previous</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if query %}&q={{ query }}{% endif %}" class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 transition">Previous</a>
         {% endif %}
 
         {% for num in page_obj.paginator.page_range %}
             {% if page_obj.number == num %}
             <span class="px-3 py-1 bg-[var(--primary-color)] text-white rounded-md">{{ num }}</span>
             {% else %}
-            <a href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}" class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 transition">{{ num }}</a>
+            <a href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if query %}&q={{ query }}{% endif %}" class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 transition">{{ num }}</a>
             {% endif %}
         {% endfor %}
 
         {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}" class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 transition">Next</a>
+        <a href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if query %}&q={{ query }}{% endif %}" class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 transition">Next</a>
         {% endif %}
     </div>
     {% endif %}
 
 </div>
+
+<script>
+    const searchInput = document.getElementById('voice-search-input');
+    const voiceBtn = document.getElementById('voice-search-btn');
+
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        
+        recognition.continuous = false;
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        
+        voiceBtn.addEventListener('click', () => {
+            searchInput.placeholder = "Listening...";
+            voiceBtn.disabled = true;
+            recognition.start();
+        });
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            searchInput.value = transcript;
+            searchInput.placeholder = "Search products...";
+            voiceBtn.disabled = false;
+            // Automatically submit the form after getting the result
+            searchInput.closest('form').submit();
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            searchInput.placeholder = "Search products...";
+            voiceBtn.disabled = false;
+        };
+
+        recognition.onend = () => {
+            searchInput.placeholder = "Search products...";
+            voiceBtn.disabled = false;
+        };
+    } else {
+        // Hide the voice button if the browser does not support the API
+        voiceBtn.style.display = 'none';
+        console.warn('Speech Recognition not supported in this browser.');
+    }
+</script>
 {% endblock %}

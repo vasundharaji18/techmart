@@ -1,5 +1,5 @@
 """
-WSGI config for techmart project.
+WSGI config for techcomputer project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
