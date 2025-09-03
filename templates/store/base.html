@@ -9,14 +9,13 @@
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font Awesome (CDN) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
           integrity="sha512-S2D8Q9Aw3a5+0+exampleKeyForFontAwesome"
           crossorigin="anonymous"
           referrerpolicy="no-referrer" />
 
-    <!-- Correct Favicon Path -->
     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
 
     <style>
@@ -41,20 +40,12 @@
             {% endif %}
         </div>
 
-        <!-- Mobile Menu Button -->
-        <button id="menu-btn" class="md:hidden p-2 focus:outline-none z-50 bg-black rounded-md hover:bg-gray-800 flex flex-col justify-around w-8 h-6 transition-all">
-            <span class="line w-full h-0.5 bg-white rounded transition-all"></span>
-            <span class="line w-full h-0.5 bg-white rounded transition-all"></span>
-            <span class="line w-full h-0.5 bg-white rounded transition-all"></span>
-        </button>
-
         <!-- Desktop Menu -->
         <ul class="hidden md:flex gap-6 items-center">
-            
             {% for link in nav_links %}
                 <li><a href="{{ link.url }}" class="hover:text-[var(--primary-color)] transition font-medium">{{ link.title }}</a></li>
             {% endfor %}
-            
+
             <li><a href="{% url 'home' %}" class="hover:text-[var(--primary-color)] transition font-medium">Home</a></li>
             <li><a href="{% url 'about' %}" class="hover:text-[var(--primary-color)] transition font-medium">About</a></li>
             <li><a href="{% url 'contact' %}" class="hover:text-[var(--primary-color)] transition font-medium">Contact</a></li>
@@ -64,9 +55,9 @@
                 <li>
                     <a href="{% url 'cart' %}" class="hover:text-[var(--primary-color)] transition font-medium">
                         Cart
-                        {% if cart_items_count %}
-                            <span class="ml-1 bg-[var(--secondary-color)] text-white text-xs px-2 py-1 rounded-full">{{ cart_items_count }}</span>
-                        {% endif %}
+                        <span id="cart-count" class="ml-1 bg-[var(--secondary-color)] text-white text-xs px-2 py-1 rounded-full">
+                            {{ cart_items_count|default:0 }}
+                        </span>
                     </a>
                 </li>
                 <li><a href="{% url 'profile' %}" class="hover:text-[var(--primary-color)] transition font-medium">Profile</a></li>
@@ -83,54 +74,6 @@
             {% endif %}
         </ul>
     </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white shadow-md md:hidden z-40">
-        <ul class="flex flex-col p-2 gap-2 text-black">
-            <li><a href="{% url 'home' %}" class="block text-black hover:text-[var(--primary-color)] transition font-medium">Home</a></li>
-            {% for link in nav_links %}
-                <li>
-                    <a href="{{ link.url }}" class="block text-black hover:text-[var(--primary-color)] transition font-medium">{{ link.title }}</a>
-                </li>
-            {% endfor %}
-            <li><a href="{% url 'about' %}" class="block text-black hover:text-[var(--primary-color)] transition font-medium">About</a></li>
-            <li><a href="{% url 'contact' %}" class="block text-black hover:text-[var(--primary-color)] transition font-medium">Contact</a></li>
-            {% if user.is_authenticated %}
-                <li><a href="{% url 'profile' %}" class="block text-black hover:text-[var(--primary-color)] transition font-medium">Profile</a></li>
-                <li>
-                    <form method="POST" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="w-full text-left text-black hover:text-[var(--primary-color)] transition font-medium">Logout</button>
-                    </form>
-                </li>
-            {% else %}
-                <li><a href="{% url 'signup' %}" class="block text-black hover:text-[var(--primary-color)] transition font-medium">Sign Up</a></li>
-                <li><a href="{% url 'login' %}" class="block text-black hover:text-[var(--primary-color)] transition font-medium">Login</a></li>
-                <li><a href="{% url 'login' %}?next={% url 'cart' %}" class="block text-black hover:text-[var(--primary-color)] transition font-medium">Cart</a></li>
-            {% endif %}
-        </ul>
-    </div>
-
-    <script>
-        const btn = document.getElementById('menu-btn');
-        const menu = document.getElementById('mobile-menu');
-
-        btn.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
-            btn.classList.toggle('open');
-
-            const lines = btn.querySelectorAll('.line');
-            if (btn.classList.contains('open')) {
-                lines[0].style.transform = 'rotate(45deg) translate(7px, 7px)';
-                lines[1].style.opacity = '0';
-                lines[2].style.transform = 'rotate(-45deg) translate(7px, -7px)';
-            } else {
-                lines[0].style.transform = 'none';
-                lines[1].style.opacity = '1';
-                lines[2].style.transform = 'none';
-            }
-        });
-    </script>
 </nav>
 
 <main class="container mx-auto mt-6">
@@ -160,5 +103,49 @@
 
     <p class="text-gray-600">&copy; {{ site_logo.alt_text|default:"Techcomputers" }} {{ now|date:"Y" }}</p>
 </footer>
+
+<!-- ---------------------- CSRF & Add to Cart AJAX ---------------------- -->
+<script>
+    // Get CSRF token from cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrftoken = getCookie('csrftoken');
+
+  document.querySelectorAll('.btn-add').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const productId = this.dataset.productId;
+        fetch(`/cart/add/${productId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('cart-count').textContent = data.cart_count;
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+});
+
+</script>
+
 </body>
 </html>

@@ -54,6 +54,11 @@ def register(request):
 # ----------------- SHOP -----------------
 def shop(request):
     category_id = request.GET.get('category')
+    query = request.GET.get('q')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    sort_by = request.GET.get('sort_by')
+
     products = Product.objects.all()
     categories = Category.objects.all()
     selected_category = None
@@ -66,21 +71,36 @@ def shop(request):
         except ValueError:
             selected_category = None
 
+    if query:
+        products = products.filter(title__icontains=query)
+
+    if min_price:
+        products = products.filter(price__gte=min_price)
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+    if sort_by == "price_asc":
+        products = products.order_by('price')
+    elif sort_by == "price_desc":
+        products = products.order_by('-price')
+    elif sort_by == "newest":
+        products = products.order_by('-created_at')
+
     paginator = Paginator(products, 8)
     page_number = request.GET.get('page')
-    try:
-        page_obj = paginator.get_page(page_number)
-    except PageNotAnInteger:
-        page_obj = paginator.page(1)
-    except EmptyPage:
-        page_obj = paginator.page(paginator.num_pages)
+    page_obj = paginator.get_page(page_number)
 
     return render(request, 'store/shop.html', {
         'products': page_obj,
         'categories': categories,
         'selected_category': selected_category,
         'page_obj': page_obj,
+        'query': query,
+        'min_price': min_price,
+        'max_price': max_price,
+        'sort_by': sort_by,
     })
+
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)

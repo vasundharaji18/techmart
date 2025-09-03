@@ -157,6 +157,11 @@ class Banner(models.Model):
     active = models.BooleanField(default=True)
     order = models.PositiveIntegerField(default=0)
 
+    class Meta:
+        ordering = ['order']  # banners will be ordered by the 'order' field
+        verbose_name = 'Banner'
+        verbose_name_plural = 'Banners'
+
     def __str__(self):
         return self.title
 

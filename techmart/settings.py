@@ -5,7 +5,7 @@ Django settings for techcomputer project.
 from pathlib import Path
 import environ
 import os
-
+from django.utils.translation import gettext_lazy as _
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -88,10 +88,26 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Internationalization
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'en'
+
+LANGUAGES = [
+    ('en', _('English')),
+    ('hi', _('Hindi')),
+    ('mr', _('Marathi')),
+    ('gu', _('Gujarati')),
+    ('te', _('Telugu')),
+    ('ta', _('Tamil')),
+    ('kn', _('Kannada')),
+    ('ml', _('Malayalam')),
+]
+
 USE_I18N = True
+USE_L10N = True
 USE_TZ = True
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',  # folder where translation files will be stored
+]
 
 # Static & media files
 STATIC_URL = '/static/'
