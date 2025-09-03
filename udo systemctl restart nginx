@@ -1,0 +1,11 @@
+[0;1;32m●[0m techmart.service - Gunicorn instance to serve TechMart
+     Loaded: loaded (]8;;file://srv958231/etc/systemd/system/techmart.service/etc/systemd/system/techmart.service]8;;; [0;1;32menabled[0m; preset: [0;1;32menabled[0m)
+     Active: [0;1;32mactive (running)[0m since Tue 2025-09-02 06:42:06 UTC; 16ms ago
+   Main PID: 70367 (gunicorn)
+      Tasks: 1 (limit: 9485)
+     Memory: 3.0M (peak: 3.1M)
+        CPU: 11ms
+     CGroup: /system.slice/techmart.service
+             └─[0;38;5;245m70367 /var/www/techmart/venv/bin/python3 /var/www/techmart/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 techmart.wsgi:application[0m
+
+Sep 02 06:42:06 srv958231 systemd[1]: Started techmart.service - Gunicorn instance to serve TechMart.
