@@ -1,66 +1,65 @@
 {% extends "store/base.html" %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 py-8">
+<div class="max-w-7xl mx-auto px-4 py-6 md:py-8">
 
-    <h1 class="text-4xl font-bold mb-8 text-center text-[var(--primary-color)]">Shop</h1>
+    <h1 class="text-3xl sm:text-4xl font-extrabold mb-6 text-center text-gray-900 leading-tight">
+        Discover Our Products
+    </h1>
 
-    <div class="flex flex-wrap gap-2 mb-6 justify-center">
-        <a href="{% url 'shop' %}" class="px-4 py-2 rounded-full font-medium transition-colors duration-200 
-            {% if not selected_category %}bg-[var(--primary-color)] text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
-            All
-        </a>
-        {% for category in categories %}
-        <a href="?category={{ category.id }}{% if query %}&q={{ query }}{% endif %}" class="px-4 py-2 rounded-full font-medium transition-colors duration-200 
-            {% if selected_category == category.id %}bg-[var(--primary-color)] text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
-            {{ category.name }}
-        </a>
-        {% endfor %}
-    </div>
-
-    <button id="filterToggle" class="lg:hidden mb-4 px-4 py-2 bg-[var(--primary-color)] text-white rounded-md">Filters</button>
-
-    <div class="flex flex-col lg:flex-row gap-8">
-
-        <aside id="ys-filter" class="w-full lg:w-1/4 bg-white p-4 rounded-lg shadow-md hidden lg:block lg:sticky lg:top-4 transition-transform duration-300 ease-in-out">
-            <h2 class="text-xl font-semibold mb-4">Filters</h2>
+    <div class="flex flex-col lg:flex-row gap-6">
+        <aside id="ys-filter" class="w-full lg:w-1/4 bg-white p-5 rounded-xl shadow-lg lg:block lg:sticky lg:top-8 transition-transform duration-300 ease-in-out transform lg:translate-x-0 hidden">
+            <div class="flex justify-between items-center mb-5">
+                <h2 class="text-xl font-bold text-gray-800">Filters</h2>
+                <button id="filterClose" class="lg:hidden text-gray-500 hover:text-gray-800 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
 
             <form action="{% url 'shop' %}" method="get">
                 {% if query %}
                 <input type="hidden" name="q" value="{{ query }}">
                 {% endif %}
 
-                <div class="mb-6">
-                    <h3 class="font-semibold mb-2">Price</h3>
-                    <div class="flex items-center gap-2">
-                        <input type="number" name="min_price" placeholder="Min" value="{{ min_price|default:'' }}" class="w-1/2 px-3 py-2 border rounded-md focus:outline-none">
-                        <span class="text-gray-500">-</span>
-                        <input type="number" name="max_price" placeholder="Max" value="{{ max_price|default:'' }}" class="w-1/2 px-3 py-2 border rounded-md focus:outline-none">
+                <div class="mb-5 border-b border-gray-200 pb-5">
+                    <h3 class="font-semibold text-base mb-2 text-gray-700">Price</h3>
+                    <div class="flex items-center gap-3">
+                        <div class="relative w-1/2">
+                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400">₹</span>
+                            <input type="number" name="min_price" placeholder="Min" value="{{ min_price|default:'' }}" class="w-full px-2 pl-5 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[var(--primary-color)] transition-shadow">
+                        </div>
+                        <span class="text-gray-500 text-sm">-</span>
+                        <div class="relative w-1/2">
+                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400">₹</span>
+                            <input type="number" name="max_price" placeholder="Max" value="{{ max_price|default:'' }}" class="w-full px-2 pl-5 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[var(--primary-color)] transition-shadow">
+                        </div>
                     </div>
                 </div>
 
-                <div class="mb-6">
-                    <h3 class="font-semibold mb-2">Brands</h3>
-                    <ul class="flex flex-col gap-1">
+                <div class="mb-5 border-b border-gray-200 pb-5">
+                    <h3 class="font-semibold text-base mb-2 text-gray-700">Brands</h3>
+                    <ul class="flex flex-col gap-1.5 max-h-40 overflow-y-auto custom-scrollbar">
                         {% for brand in brands %}
                         <li>
-                            <label class="flex items-center gap-2 text-gray-700">
-                                <input type="checkbox" name="brands" value="{{ brand }}" {% if brand in selected_brands %}checked{% endif %} class="rounded-sm text-[var(--primary-color)] focus:ring-transparent">
-                                {{ brand }}
+                            <label class="flex items-center gap-2 text-gray-700 text-sm hover:text-gray-900 cursor-pointer transition-colors duration-200">
+                                <input type="checkbox" name="brands" value="{{ brand }}" {% if brand in selected_brands %}checked{% endif %} class="h-4 w-4 rounded-sm text-[var(--primary-color)] focus:ring-[var(--primary-color)]">
+                                <span>{{ brand }}</span>
                             </label>
                         </li>
                         {% endfor %}
                     </ul>
                 </div>
-                
-                <div class="mb-6">
-                    <h3 class="font-semibold mb-2">RAM Size</h3>
-                    <ul class="flex flex-col gap-1">
+
+                <div class="mb-5 border-b border-gray-200 pb-5">
+                    <h3 class="font-semibold text-base mb-2 text-gray-700">RAM Size</h3>
+                    <ul class="flex flex-col gap-1.5">
                         {% for ram in ram_sizes %}
                         <li>
-                            <label class="flex items-center gap-2 text-gray-700">
-                                <input type="checkbox" name="ram_sizes" value="{{ ram }}" {% if ram in selected_ram_sizes %}checked{% endif %} class="rounded-sm text-[var(--primary-color)] focus:ring-transparent">
-                                {{ ram }} GB
+                            <label class="flex items-center gap-2 text-gray-700 text-sm hover:text-gray-900 cursor-pointer transition-colors duration-200">
+                                <input type="checkbox" name="ram_sizes" value="{{ ram }}" {% if ram in selected_ram_sizes %}checked{% endif %} class="h-4 w-4 rounded-sm text-[var(--primary-color)] focus:ring-[var(--primary-color)]">
+                                <span>{{ ram }} GB</span>
                             </label>
                         </li>
                         {% endfor %}
@@ -68,16 +67,16 @@
                 </div>
 
                 <div class="mb-6">
-                    <h3 class="font-semibold mb-2">Sort By</h3>
-                    <select name="sort_by" class="w-full px-3 py-2 border rounded-md focus:outline-none">
-                        <option value="">Sort By</option>
+                    <h3 class="font-semibold text-base mb-2 text-gray-700">Sort By</h3>
+                    <select name="sort_by" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[var(--primary-color)] appearance-none transition-shadow">
+                        <option value="">Default Sorting</option>
                         <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
                         <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
                         <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Newest</option>
                     </select>
                 </div>
 
-                <button type="submit" class="w-full px-4 py-2 bg-[var(--primary-color)] text-white rounded-md hover:bg-[var(--secondary-color)] transition font-medium">
+                <button type="submit" class="w-full px-5 py-3 bg-[var(--primary-color)] text-white font-semibold rounded-lg hover:bg-[var(--secondary-color)] transition-all transform hover:scale-105 shadow-md text-sm">
                     Apply Filters
                 </button>
             </form>
@@ -85,115 +84,135 @@
 
         <div class="flex-1">
 
-            <div class="mb-4 flex flex-wrap gap-2">
-                {% if selected_category_name %}
-                    <span class="px-3 py-1 bg-[var(--primary-color)] text-white rounded-md">Category: {{ selected_category_name }}</span>
-                {% endif %}
-                {% if selected_brands %}
-                    {% for brand in selected_brands %}
-                    <span class="px-3 py-1 bg-[var(--primary-color)] text-white rounded-md">Brand: {{ brand }}</span>
-                    {% endfor %}
-                {% endif %}
-                {% if selected_ram_sizes %}
-                    {% for ram in selected_ram_sizes %}
-                    <span class="px-3 py-1 bg-[var(--primary-color)] text-white rounded-md">RAM: {{ ram }} GB</span>
-                    {% endfor %}
-                {% endif %}
-                {% if min_price or max_price %}
-                    <span class="px-3 py-1 bg-[var(--primary-color)] text-white rounded-md">Price: ₹{{ min_price|default:'0' }} - ₹{{ max_price|default:'∞' }}</span>
-                {% endif %}
-                {% if sort_by %}
-                    <span class="px-3 py-1 bg-[var(--primary-color)] text-white rounded-md">Sorted: {{ sort_by|capfirst }}</span>
-                {% endif %}
-            </div>
-
-            <form action="{% url 'shop' %}" method="get" class="mb-6 flex flex-col sm:flex-row gap-3">
+            <form action="{% url 'shop' %}" method="get" class="mb-5 flex flex-col sm:flex-row gap-2">
                 <div class="relative flex-1">
-                    <input id="voice-search-input" type="text" name="q" value="{{ query|default:'' }}" placeholder="Search products..." class="w-full px-4 py-3 border rounded-md focus:outline-none pr-10">
-                    <button type="button" id="voice-search-btn" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-[var(--primary-color)]">
+                    <input id="voice-search-input" type="text" name="q" value="{{ query|default:'' }}" placeholder="Search products..." class="w-full px-4 py-2.5 border border-gray-300 rounded-full focus:outline-none pr-10 shadow-sm text-sm focus:ring-1 focus:ring-[var(--primary-color)]">
+                    <button type="button" id="voice-search-btn" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-800 transition-colors">
                         <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm3 14a7 7 0 005.8-3.2L16 14.8V16a1 1 0 102 0v-2a1 1 0 00-1-1h-1.2A8 8 0 0110 18z" clip-rule="evenodd" />
                             <path d="M12 14.12a1 1 0 01.4-.41V11a1 1 0 112 0v2.71a1 1 0 01-1.4.41zM8 14.12A1 1 0 017.6 11V8a1 1 0 112 0v3.12a1 1 0 01-1.6.41z" />
                         </svg>
                     </button>
                 </div>
-                
-                {% if selected_category %}
-                <input type="hidden" name="category" value="{{ selected_category }}">
-                {% endif %}
-                {% if min_price %}
-                <input type="hidden" name="min_price" value="{{ min_price }}">
-                {% endif %}
-                {% if max_price %}
-                <input type="hidden" name="max_price" value="{{ max_price }}">
-                {% endif %}
-                {% if sort_by %}
-                <input type="hidden" name="sort_by" value="{{ sort_by }}">
-                {% endif %}
-                <button type="submit" class="px-6 py-3 bg-[var(--primary-color)] text-white rounded-md hover:bg-[var(--secondary-color)] transition font-medium">
+                {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+                {% if min_price %}<input type="hidden" name="min_price" value="{{ min_price }}">{% endif %}
+                {% if max_price %}<input type="hidden" name="max_price" value="{{ max_price }}">{% endif %}
+                {% if sort_by %}<input type="hidden" name="sort_by" value="{{ sort_by }}">{% endif %}
+                <button type="submit" class="hidden sm:inline-block px-5 py-2.5 bg-[var(--primary-color)] text-white rounded-full hover:bg-[var(--secondary-color)] transition-colors font-semibold shadow-sm text-sm">
                     Search
                 </button>
             </form>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+            <div class="flex flex-wrap gap-2 mb-5 justify-center lg:justify-start">
+                <a href="{% url 'shop' %}" class="px-4 py-2 rounded-full font-medium transition-colors duration-200 text-sm
+                    {% if not selected_category %}bg-[var(--primary-color)] text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+                    All
+                </a>
+                {% for category in categories %}
+                <a href="?category={{ category.id }}{% if query %}&q={{ query }}{% endif %}" class="px-4 py-2 rounded-full font-medium transition-colors duration-200 text-sm
+                    {% if selected_category == category.id %}bg-[var(--primary-color)] text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+                    {{ category.name }}
+                </a>
+                {% endfor %}
+            </div>
+
+            <div class="mb-6 flex flex-wrap gap-2 items-center">
+                <button id="filterToggle" class="lg:hidden px-4 py-2.5 bg-[var(--primary-color)] text-white rounded-full font-medium shadow-sm flex items-center gap-1.5 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
+                    </svg>
+                    Filter
+                </button>
+                {% if selected_category_name or selected_brands or selected_ram_sizes or min_price or max_price or sort_by %}
+                <div class="flex flex-wrap gap-2">
+                    <span class="text-xs font-semibold text-gray-600">Active Filters:</span>
+                    {% if selected_category_name %}
+                    <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs">Category: {{ selected_category_name }}</span>
+                    {% endif %}
+                    {% if selected_brands %}
+                        {% for brand in selected_brands %}
+                        <span class="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs">Brand: {{ brand }}</span>
+                        {% endfor %}
+                    {% endif %}
+                    {% if selected_ram_sizes %}
+                        {% for ram in selected_ram_sizes %}
+                        <span class="px-2 py-0.5 bg-purple-100 text-purple-800 rounded-full text-xs">RAM: {{ ram }} GB</span>
+                        {% endfor %}
+                    {% endif %}
+                    {% if min_price or max_price %}
+                    <span class="px-2 py-0.5 bg-red-100 text-red-800 rounded-full text-xs">Price: ₹{{ min_price|default:'0' }} - ₹{{ max_price|default:'∞' }}</span>
+                    {% endif %}
+                    {% if sort_by %}
+                    <span class="px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-full text-xs">Sorted: {{ sort_by|capfirst }}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {% for product in products %}
-                <div class="bg-white shadow rounded-lg p-4 hover:shadow-2xl transition flex flex-col">
+                <div class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col relative group transform hover:scale-105">
                     {% if product.images.exists %}
-                        <img src="{{ product.images.first.image.url }}" alt="{{ product.title }}" class="w-full h-48 object-contain mb-2">
+                        <img src="{{ product.images.first.image.url }}" alt="{{ product.title }}" class="w-full h-40 object-contain p-3 transition-transform duration-300">
                     {% elif product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full h-48 object-contain mb-2">
+                        <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full h-40 object-contain p-3 transition-transform duration-300">
                     {% else %}
-                        <div class="h-48 w-full bg-gray-200 flex items-center justify-center rounded-md mb-4 text-gray-500">
+                        <div class="h-40 w-full bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
                             No Image
                         </div>
                     {% endif %}
-                    <h3 class="font-semibold text-lg text-gray-800 mt-2">{{ product.title }}</h3>
                     
-                    {% comment %} Price with Offer Display {% endcomment %}
-                    {% if product.price > product.get_discounted_price %}
-                        <div class="flex items-baseline gap-2 mt-1">
-                            <p class="text-xl font-bold text-gray-800">₹{{ product.get_discounted_price }}</p>
-                            <p class="text-gray-500 line-through">₹{{ product.price }}</p>
-                        </div>
-                    {% else %}
-                        <p class="text-xl font-bold text-gray-800 mt-1">₹{{ product.price }}</p>
+                    {% if product.offer_price %}
+                        <span class="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md">Sale</span>
                     {% endif %}
 
-                    <p class="text-gray-500 text-sm mt-1">{{ product.category.name }}</p>
-                    
-                    <div class="mt-auto flex gap-2 pt-4">
-                        <a href="{% url 'product_detail' product.id %}" class="flex-1 text-center px-3 py-2 border border-gray-300 rounded-md hover:bg-[var(--primary-color)] hover:text-white transition">
-                            View
-                        </a>
-                        <a href="{% url 'add_to_cart' product.id %}" class="flex-1 text-center px-3 py-2 bg-[var(--primary-color)] text-white rounded-md hover:bg-[var(--secondary-color)] transition">
-                            Add to Cart
-                        </a>
+                    <div class="p-4 flex flex-col flex-grow">
+                        <h3 class="font-bold text-base text-gray-900 mb-0.5 leading-tight">{{ product.title }}</h3>
+                        <p class="text-xs text-gray-500 mb-2">{{ product.category.name }}</p>
+
+                        {% if product.price > product.get_discounted_price %}
+                            <div class="flex items-center gap-1.5 mb-2">
+                                <p class="text-lg font-bold text-gray-800">₹{{ product.get_discounted_price }}</p>
+                                <p class="text-gray-400 line-through text-xs">₹{{ product.price }}</p>
+                            </div>
+                        {% else %}
+                            <p class="text-lg font-bold text-gray-800 mb-2">₹{{ product.price }}</p>
+                        {% endif %}
+
+                        <div class="mt-auto flex flex-col sm:flex-row gap-2 pt-3">
+                            <a href="{% url 'product_detail' product.id %}" class="flex-1 text-center px-3 py-2 border border-gray-200 text-gray-700 font-medium rounded-full hover:bg-gray-100 transition-colors duration-200 text-sm">
+                                View
+                            </a>
+                            <a href="{% url 'add_to_cart' product.id %}" class="flex-1 text-center px-3 py-2 bg-[var(--primary-color)] text-white rounded-full hover:bg-[var(--secondary-color)] transition-all font-semibold shadow-sm text-sm">
+                                Add to Cart
+                            </a>
+                        </div>
                     </div>
                 </div>
                 {% empty %}
-                <div class="col-span-full text-center py-10">
-                    <h2 class="text-2xl font-semibold text-gray-700">No products found.</h2>
-                    <p class="text-gray-500 mt-2">Try adjusting your filters or search terms.</p>
+                <div class="col-span-full text-center py-16">
+                    <h2 class="text-2xl font-bold text-gray-700 mb-1">No products found.</h2>
+                    <p class="text-gray-500 text-base">Try adjusting your filters or search terms.</p>
                 </div>
                 {% endfor %}
             </div>
 
             {% if page_obj %}
-            <div class="mt-8 flex justify-center gap-2 flex-wrap">
+            <div class="mt-8 flex justify-center gap-2 flex-wrap text-sm">
                 {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if query %}&q={{ query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}{% for brand in selected_brands %}&brands={{ brand }}{% endfor %}{% for ram in selected_ram_sizes %}&ram_sizes={{ ram }}{% endfor %}" class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 transition">Previous</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if query %}&q={{ query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}{% for brand in selected_brands %}&brands={{ brand }}{% endfor %}{% for ram in selected_ram_sizes %}&ram_sizes={{ ram }}{% endfor %}" class="px-4 py-1.5 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors font-medium">Previous</a>
                 {% endif %}
 
                 {% for num in page_obj.paginator.page_range %}
                     {% if page_obj.number == num %}
-                    <span class="px-3 py-1 bg-[var(--primary-color)] text-white rounded-md">{{ num }}</span>
+                    <span class="px-4 py-1.5 bg-[var(--primary-color)] text-white rounded-full font-bold shadow-sm">{{ num }}</span>
                     {% else %}
-                    <a href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if query %}&q={{ query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}{% for brand in selected_brands %}&brands={{ brand }}{% endfor %}{% for ram in selected_ram_sizes %}&ram_sizes={{ ram }}{% endfor %}" class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 transition">{{ num }}</a>
+                    <a href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if query %}&q={{ query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}{% for brand in selected_brands %}&brands={{ brand }}{% endfor %}{% for ram in selected_ram_sizes %}&ram_sizes={{ ram }}{% endfor %}" class="px-4 py-1.5 bg-gray-200 rounded-full hover:bg-gray-300 transition-colors font-medium">{{ num }}</a>
                     {% endif %}
                 {% endfor %}
 
                 {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if query %}&q={{ query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}{% for brand in selected_brands %}&brands={{ brand }}{% endfor %}{% for ram in selected_ram_sizes %}&ram_sizes={{ ram }}{% endfor %}" class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 transition">Next</a>
+                <a href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if query %}&q={{ query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}{% for brand in selected_brands %}&brands={{ brand }}{% endfor %}{% for ram in selected_ram_sizes %}&ram_sizes={{ ram }}{% endfor %}" class="px-4 py-1.5 bg-gray-200 rounded-full hover:bg-gray-300 transition-colors font-medium">Next</a>
                 {% endif %}
             </div>
             {% endif %}
@@ -202,13 +221,55 @@
     </div>
 </div>
 
+<style>
+    /* Custom scrollbar for better styling on webkit browsers */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+    @media (max-width: 1023px) {
+        #ys-filter.hidden-mobile {
+            transform: translateX(0);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 50;
+            padding: 1.5rem 1rem;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            overflow-y: auto;
+        }
+    }
+</style>
+
 <script>
     // Toggle filter sidebar on mobile
     const filter = document.getElementById('ys-filter');
     const toggle = document.getElementById('filterToggle');
+    const filterClose = document.getElementById('filterClose');
 
     toggle.addEventListener('click', () => {
-        filter.classList.toggle('hidden');
+        filter.classList.remove('hidden');
+        filter.classList.add('hidden-mobile');
+    });
+
+    filterClose.addEventListener('click', () => {
+        filter.classList.add('hidden');
+        filter.classList.remove('hidden-mobile');
     });
 
     // Voice Search Functionality
@@ -219,11 +280,12 @@
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
 
-        recognition.continuous = false; // Stop after a single phrase
-        recognition.lang = 'en-US'; // Set language
+        recognition.continuous = false;
+        recognition.lang = 'en-US';
 
         voiceSearchBtn.addEventListener('click', () => {
             voiceSearchInput.placeholder = 'Listening...';
+            voiceSearchInput.classList.add('border-[var(--primary-color)]', 'ring-1', 'ring-[var(--primary-color)]');
             recognition.start();
         });
 
@@ -231,20 +293,23 @@
             const transcript = event.results[0][0].transcript;
             voiceSearchInput.value = transcript;
             voiceSearchInput.placeholder = 'Search products...';
+            voiceSearchInput.classList.remove('border-[var(--primary-color)]', 'ring-1', 'ring-[var(--primary-color)]');
             voiceSearchBtn.closest('form').submit();
         };
 
         recognition.onend = () => {
             voiceSearchInput.placeholder = 'Search products...';
+            voiceSearchInput.classList.remove('border-[var(--primary-color)]', 'ring-1', 'ring-[var(--primary-color)]');
         };
 
         recognition.onerror = (event) => {
             console.error('Speech recognition error:', event.error);
             voiceSearchInput.placeholder = 'Search products...';
+            voiceSearchInput.classList.remove('border-[var(--primary-color)]', 'ring-1', 'ring-[var(--primary-color)]');
             alert('Voice search failed. Please try again.');
         };
     } else {
-        voiceSearchBtn.style.display = 'none'; // Hide the button if not supported
+        voiceSearchBtn.style.display = 'none';
         console.warn('Web Speech API is not supported in this browser.');
     }
 </script>

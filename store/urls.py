@@ -43,4 +43,5 @@ urlpatterns = [
     path('cart/decrease/<int:product_id>/', views.decrease_quantity, name='decrease_quantity'),
 
      path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
+      path('cart/count/', views.get_cart_count, name='get_cart_count'),
 ]

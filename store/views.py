@@ -126,6 +126,16 @@ def add_to_cart(request, product_id):
     messages.success(request, f"{product.title} added to cart.")
     return redirect('shop')
 
+from django.http import JsonResponse
+
+def get_cart_count(request):
+    if request.user.is_authenticated:
+        cart_count = request.user.cart.items.count() # assuming you have a User model with a cart relationship
+    else:
+        cart = request.session.get('cart', {})
+        cart_count = sum(item['quantity'] for item in cart.values())
+    return JsonResponse({'cart_count': cart_count})
+
 @login_required
 def remove_from_cart(request, product_id):
     cart = get_object_or_404(Cart, user=request.user)
